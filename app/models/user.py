@@ -50,7 +50,7 @@ class Skill(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(100), nullable=False)
     skill_type = Column(Enum(SkillType), nullable=False)
-    level = Column(String(20), default="beginner")  # beginner | intermediate | advanced
+    level = Column(String(20), default="beginner") 
     created_at = Column(DateTime(timezone=True), default=utcnow)
 
     user = relationship("User", back_populates="skills")
@@ -104,8 +104,8 @@ class Match(Base):
     id = Column(Integer, primary_key=True, index=True)
     requester_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     target_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    teach_skill = Column(String(100), nullable=False)   # requester teaches this
-    learn_skill = Column(String(100), nullable=False)   # requester wants to learn this
+    teach_skill = Column(String(100), nullable=False)  
+    learn_skill = Column(String(100), nullable=False)   
     status = Column(Enum(MatchStatus), default=MatchStatus.pending)
     created_at = Column(DateTime(timezone=True), default=utcnow)
     updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
@@ -161,10 +161,10 @@ class CoinTransaction(Base):
 
     id = Column(BigInteger, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    amount = Column(Float, nullable=False)          # positive = earned, negative = spent
+    amount = Column(Float, nullable=False)         
     tx_type = Column(Enum(TxType), nullable=False)
-    reason = Column(String(255), nullable=True)     # e.g. "lesson_created", "match_completed"
-    ref_id = Column(Integer, nullable=True)         # optional FK to lesson/match/challenge
+    reason = Column(String(255), nullable=True)     
+    ref_id = Column(Integer, nullable=True)        
     created_at = Column(DateTime(timezone=True), default=utcnow)
 
     user = relationship("User", back_populates="coin_transactions")
@@ -190,7 +190,7 @@ class Badge(Base):
     __tablename__ = "badges"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String(50), unique=True, nullable=False)   # "mentor", "top_teacher", etc.
+    code = Column(String(50), unique=True, nullable=False)   
     name = Column(String(100), nullable=False)
     description = Column(Text, nullable=True)
     icon = Column(String(10), nullable=True)
