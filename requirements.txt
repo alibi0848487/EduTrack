@@ -9,5 +9,5 @@ python-multipart
 pydantic
 pydantic-settings
 httpx
-
+email-validator
 
