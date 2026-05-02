@@ -67,7 +67,7 @@ class UserPublicOut(BaseModel):
 
 class SkillCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
-    skill_type: str  # "teach" | "learn"
+    skill_type: str  
     level: Optional[str] = "beginner"
 
 
@@ -127,7 +127,7 @@ class MatchCreate(BaseModel):
 
 
 class MatchStatusUpdate(BaseModel):
-    status: str  # "accepted" | "declined" | "completed"
+    status: str  
 
 
 class MatchOut(BaseModel):
@@ -144,10 +144,9 @@ class MatchOut(BaseModel):
 
 class MatchSuggestion(BaseModel):
     user: UserPublicOut
-    teach_skill: str   # they teach what you want to learn
-    learn_skill: str   # they want to learn what you teach
-    score: float       # match quality 0–1
-
+    teach_skill: str   
+    learn_skill: str  
+    score: float       
 
 class ChallengeCreate(BaseModel):
     title: str = Field(..., min_length=3, max_length=200)
