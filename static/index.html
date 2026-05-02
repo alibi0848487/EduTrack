@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edutrack — обмен знаниями</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0f14;
+  --bg2:#141720;
+  --bg3:#1c2030;
+  --surface:#242840;
+  --border:#2e3350;
+  --accent:#6c63ff;
+  --accent2:#ff6b6b;
+  --accent3:#43e89e;
+  --accent4:#ffd166;
+  --text:#f0f2ff;
+  --text2:#8b90b8;
+  --text3:#4a5080;
+  --coin:#ffd166;
+  --rad:12px;
+  --rad-sm:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4,.logo{font-family:'Syne',sans-serif}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,15,20,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;padding:0 24px;gap:24px}
+.logo{font-size:20px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;flex-shrink:0}
+.nav-links{display:flex;gap:4px;flex:1}
+.nav-link{padding:6px 14px;border-radius:var(--rad-sm);font-size:14px;color:var(--text2);cursor:pointer;transition:.2s;font-weight:500;border:none;background:none}
+.nav-link:hover{color:var(--text);background:var(--bg3)}
+.nav-link.active{color:var(--text);background:var(--surface)}
+.nav-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.coin-badge{display:flex;align-items:center;gap:6px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.25);border-radius:20px;padding:5px 12px;font-size:13px;font-weight:600;color:var(--coin)}
+.coin-badge .coin-icon{font-size:14px}
+.btn{padding:8px 18px;border-radius:var(--rad-sm);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;transition:.2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#7d75ff;transform:translateY(-1px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--bg3)}
+.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn-outline:hover{background:rgba(108,99,255,.12)}
+.btn-sm{padding:5px 12px;font-size:13px}
+.btn-danger{background:rgba(255,107,107,.15);color:var(--accent2);border:1px solid rgba(255,107,107,.3)}
+.btn-success{background:rgba(67,232,158,.1);color:var(--accent3);border:1px solid rgba(67,232,158,.3)}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;cursor:pointer;flex-shrink:0}
+
+/* MAIN */
+main{padding-top:60px;min-height:100vh}
+.page{display:none;padding:32px 24px;max-width:1100px;margin:0 auto}
+.page.active{display:block}
+.page-header{margin-bottom:32px}
+.page-title{font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px}
+.page-subtitle{color:var(--text2);font-size:15px}
+
+/* HERO */
+.hero{padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);pointer-events:none}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(67,232,158,.08);border:1px solid rgba(67,232,158,.2);border-radius:20px;padding:5px 14px;font-size:13px;color:var(--accent3);margin-bottom:24px;font-weight:500}
+.hero h1{font-size:clamp(36px,5vw,60px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:20px}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{color:var(--text2);font-size:17px;max-width:520px;margin:0 auto 36px;line-height:1.6}
+
+/* SEARCH BAR */
+.search-bar{display:flex;gap:0;max-width:560px;margin:0 auto;background:var(--bg2);border:1.5px solid var(--border);border-radius:50px;padding:6px;transition:.3s}
+.search-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.12)}
+.search-bar input{flex:1;background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);padding:0 16px}
+.search-bar input::placeholder{color:var(--text3)}
+.search-bar .btn{border-radius:50px;padding:9px 22px}
+
+/* TABS */
+.tab-bar{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:4px;margin-bottom:24px;width:fit-content}
+.tab{padding:7px 18px;border-radius:var(--rad-sm);font-size:14px;font-weight:500;cursor:pointer;color:var(--text2);transition:.2s;border:none;background:none}
+.tab.active{background:var(--surface);color:var(--text)}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:20px;transition:.25s;cursor:pointer;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));opacity:0;transition:.25s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(108,99,255,.12)}
+.card:hover::before{opacity:1}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;line-height:1.3;margin-bottom:6px}
+.card-meta{color:var(--text2);font-size:13px;margin-bottom:12px}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+
+/* TAGS / BADGES */
+.tag{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid}
+.tag-purple{background:rgba(108,99,255,.12);color:#a09bff;border-color:rgba(108,99,255,.25)}
+.tag-green{background:rgba(67,232,158,.08);color:var(--accent3);border-color:rgba(67,232,158,.2)}
+.tag-red{background:rgba(255,107,107,.08);color:var(--accent2);border-color:rgba(255,107,107,.2)}
+.tag-amber{background:rgba(255,209,102,.08);color:var(--coin);border-color:rgba(255,209,102,.2)}
+.tag-blue{background:rgba(56,189,248,.08);color:#7dd3fc;border-color:rgba(56,189,248,.2)}
+.tag-live{background:rgba(255,107,107,.15);color:var(--accent2);border-color:rgba(255,107,107,.3);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.badge-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-mentor{background:rgba(255,209,102,.1);color:var(--coin);border:1px solid rgba(255,209,102,.25)}
+.badge-top{background:rgba(108,99,255,.1);color:#a09bff;border:1px solid rgba(108,99,255,.25)}
+.badge-new{background:rgba(67,232,158,.08);color:var(--accent3);border:1px solid rgba(67,232,158,.2)}
+
+/* COIN DISPLAY */
+.coin-cost{display:flex;align-items:center;gap:4px;color:var(--coin);font-size:13px;font-weight:600}
+.coin-icon{font-size:13px}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:16px;text-align:center}
+.stat-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-1px}
+.stat-label{color:var(--text2);font-size:12px;margin-top:2px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:480px;padding:28px;position:relative;animation:slideUp .25s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px}
+.modal-sub{color:var(--text2);font-size:14px;margin-bottom:24px}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text2);transition:.2s}
+.modal-close:hover{color:var(--text)}
+
+/* FORM */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rad-sm);padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:.2s}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text3)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.1)}
+.form-select{cursor:pointer}
+.form-select option{background:var(--bg2)}
+.form-textarea{resize:vertical;min-height:100px;line-height:1.5}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-error{color:var(--accent2);font-size:13px;margin-top:4px}
+
+/* PROFILE */
+.profile-header{display:flex;gap:24px;align-items:flex-start;margin-bottom:28px;padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:16px}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:28px;font-weight:800;flex-shrink:0}
+.profile-info{flex:1}
+.profile-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:4px}
+.profile-bio{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.5}
+.profile-meta{display:flex;gap:16px;align-items:center}
+.rating-stars{display:flex;align-items:center;gap:4px;color:var(--coin);font-size:14px}
+
+/* SKILLS LIST */
+.skills-section{margin-bottom:24px}
+.skills-section-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.skill-tags{display:flex;flex-wrap:wrap;gap:8px}
+.skill-tag{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:13px;font-weight:500;transition:.2s}
+.skill-tag:hover{border-color:var(--accent)}
+.skill-tag.teach{border-color:rgba(108,99,255,.3);background:rgba(108,99,255,.08);color:#a09bff}
+.skill-tag.learn{border-color:rgba(67,232,158,.25);background:rgba(67,232,158,.06);color:var(--accent3)}
+.skill-add{border-style:dashed;color:var(--text3);cursor:pointer}
+.skill-add:hover{color:var(--accent);border-color:var(--accent);background:rgba(108,99,255,.05)}
+
+/* MATCH CARD */
+.match-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:20px;display:flex;align-items:center;gap:16px;transition:.2s;margin-bottom:12px}
+.match-card:hover{border-color:var(--border);background:var(--bg3)}
+.match-arrow{color:var(--text3);font-size:18px;flex-shrink:0}
+.match-skills{flex:1;display:flex;flex-direction:column;gap:6px}
+.match-row{display:flex;align-items:center;gap:8px;font-size:13px}
+.match-actions{display:flex;gap:8px;flex-shrink:0}
+
+/* CHALLENGE CARD */
+.challenge-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:20px;position:relative;overflow:hidden}
+.challenge-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent2),var(--accent4))}
+.challenge-progress{height:4px;background:var(--bg3);border-radius:2px;margin-top:14px;overflow:hidden}
+.challenge-bar{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent4));border-radius:2px;transition:.6s}
+
+/* LEADERBOARD */
+.lb-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;width:32px;text-align:center;flex-shrink:0}
+.lb-rank.gold{color:var(--coin)}
+.lb-rank.silver{color:#b0b8cc}
+.lb-rank.bronze{color:#c87c4c}
+
+/* NOTIFICATION */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:14px 18px;font-size:14px;max-width:300px;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:toastIn .3s ease;display:none}
+.toast.show{display:block}
+.toast.success{border-color:rgba(67,232,158,.3)}
+.toast.error{border-color:rgba(255,107,107,.3)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* AUTH PAGES */
+.auth-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:40px 24px}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:420px}
+.auth-logo{text-align:center;margin-bottom:32px}
+.auth-logo .logo{font-size:28px;display:block;margin-bottom:8px}
+.auth-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:4px;text-align:center}
+.auth-sub{color:var(--text2);font-size:14px;text-align:center;margin-bottom:28px}
+.auth-switch{text-align:center;margin-top:20px;font-size:14px;color:var(--text2)}
+.auth-switch span{color:var(--accent);cursor:pointer;font-weight:500}
+.auth-switch span:hover{text-decoration:underline}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:60px 24px;color:var(--text2)}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+.empty h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:24px 0}
+
+/* SECTION TITLE */
+.section-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.see-all{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;color:var(--accent);cursor:pointer}
+.see-all:hover{text-decoration:underline}
+
+/* LIVE DOT */
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);animation:pulse 1.5s infinite;flex-shrink:0}
+
+/* ONLINE USERS ROW */
+.online-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin-bottom:24px;scrollbar-width:none}
+.online-row::-webkit-scrollbar{display:none}
+.online-user{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.online-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;border:2px solid var(--bg);position:relative;cursor:pointer}
+.online-indicator{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:var(--accent3);border-radius:50%;border:2px solid var(--bg2)}
+.online-name{font-size:11px;color:var(--text2);text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* SEPARATOR */
+.or-sep{display:flex;align-items:center;gap:12px;color:var(--text3);font-size:13px;margin:20px 0}
+.or-sep::before,.or-sep::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.w-full{width:100%}
+.mt-8{margin-top:8px}
+.mt-12{margin-top:12px}
+.mt-16{margin-top:16px}
+.mt-24{margin-top:24px}
+.flex{display:flex}
+.items-center{align-items:center}
+.gap-8{gap:8px}
+.gap-12{gap:12px}
+.justify-between{justify-content:space-between}
+.text-sm{font-size:13px}
+.text-muted{color:var(--text2)}
+.font-bold{font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="navigate('home')">Edu<span style="opacity:.5">track</span></div>
+  <div class="nav-links" id="nav-links">
+    <button class="nav-link active" onclick="navigate('home')">Главная</button>
+    <button class="nav-link" onclick="navigate('lessons')">Уроки</button>
+    <button class="nav-link" onclick="navigate('match')">Матчинг</button>
+    <button class="nav-link" onclick="navigate('challenges')">Челленджи</button>
+    <button class="nav-link" onclick="navigate('leaderboard')">Рейтинг</button>
+  </div>
+  <div class="nav-right" id="nav-right">
+    <div class="coin-badge" id="coin-display" style="display:none">
+      <span class="coin-icon">🪙</span>
+      <span id="coin-amount">100</span>
+    </div>
+    <button class="btn btn-secondary btn-sm" id="btn-login" onclick="showModal('login-modal')">Войти</button>
+    <button class="btn btn-primary btn-sm" id="btn-register" onclick="showModal('register-modal')">Регистрация</button>
+    <div class="avatar" id="user-avatar" style="display:none" onclick="navigate('profile')">A</div>
+  </div>
+</nav>
+
+<!-- PAGES -->
+<main>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-tag">✨ Обмен знаниями нового поколения</div>
+    <h1>Учись. Учи.<br><span>Обменивайся</span></h1>
+    <p class="hero-sub">Найди ментора, который научит тебя нужному навыку — и поделись своим. Без оплаты деньгами, только SkillCoins.</p>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Введи навык: Python, дизайн, фотография..." onkeyup="handleSearch(event)">
+      <button class="btn btn-primary" onclick="doSearch()">Найти</button>
+    </div>
+  </div>
+
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px 48px">
+
+    <!-- Онлайн -->
+    <div class="section-title">
+      <span>🟢 Активные сейчас</span>
+    </div>
+    <div class="online-row" id="online-row"></div>
+
+    <!-- Популярные уроки -->
+    <div class="section-title">
+      <span>🔥 Популярные уроки</span>
+      <span class="see-all" onclick="navigate('lessons')">Все уроки →</span>
+    </div>
+    <div class="cards-grid" id="popular-lessons"></div>
+
+    <div class="divider"></div>
+
+    <!-- Челленджи -->
+    <div class="section-title">
+      <span>⚡ Активные челленджи</span>
+      <span class="see-all" onclick="navigate('challenges')">Все →</span>
+    </div>
+    <div class="cards-grid" id="home-challenges"></div>
+  </div>
+</div>
+
+<!-- LESSONS -->
+<div class="page" id="page-lessons">
+  <div class="page-header">
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="page-title">📚 Уроки</div>
+        <div class="page-subtitle">Короткие видео, чек-листы и мини-тесты</div>
+      </div>
+      <button class="btn btn-primary" onclick="showModal('create-lesson-modal')">+ Создать урок</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab active" onclick="filterLessons('all',this)">Все</div>
+    <div class="tab" onclick="filterLessons('programming',this)">Программирование</div>
+    <div class="tab" onclick="filterLessons('design',this)">Дизайн</div>
+    <div class="tab" onclick="filterLessons('marketing',this)">Маркетинг</div>
+    <div class="tab" onclick="filterLessons('language',this)">Языки</div>
+    <div class="tab" onclick="filterLessons('other',this)">Другое</div>
+  </div>
+  <div class="cards-grid" id="lessons-grid"></div>
+</div>
+
+<!-- MATCH -->
+<div class="page" id="page-match">
+  <div class="page-header">
+    <div class="page-title">🤝 Матчинг</div>
+    <div class="page-subtitle">Алгоритм подбирает пары: ты учишь их — они учат тебя</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:24px">
+    <div>
+      <div class="section-title">Подходящие пары для тебя</div>
+      <div id="match-suggestions"></div>
+    </div>
+    <div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:20px">
+        <div style="font-family:Syne,sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Мои навыки</div>
+        <div class="skills-section">
+          <div class="skills-section-title">Преподаю</div>
+          <div class="skill-tags" id="teach-tags"></div>
+          <div class="skill-tag skill-add mt-8" onclick="showModal('add-teach-modal')">+ Добавить навык</div>
+        </div>
+        <div class="divider" style="margin:16px 0"></div>
+        <div class="skills-section">
+          <div class="skills-section-title">Хочу изучить</div>
+          <div class="skill-tags" id="learn-tags"></div>
+          <div class="skill-tag skill-add mt-8" onclick="showModal('add-learn-modal')">+ Добавить навык</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGES -->
+<div class="page" id="page-challenges">
+  <div class="page-header">
+    <div class="page-title">⚡ Челленджи</div>
+    <div class="page-subtitle">Командные задания с дедлайном и наградой в SkillCoins</div>
+  </div>
+  <div class="cards-grid" id="challenges-grid"></div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="page" id="page-leaderboard">
+  <div class="page-header">
+    <div class="page-title">🏆 Рейтинг</div>
+    <div class="page-subtitle">Топ пользователей по активности и обмену знаниями</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:20px">
+      <div class="section-title" style="margin-bottom:12px">Учителя месяца</div>
+      <div id="lb-teachers"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rad);padding:20px">
+      <div class="section-title" style="margin-bottom:12px">Топ учеников</div>
+      <div id="lb-students"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="page" id="page-profile">
+  <div id="profile-content"></div>
+</div>
+
+</main>
+
+<!-- MODALS -->
+
+<!-- LOGIN -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('login-modal')">✕</div>
+    <div class="modal-title">Добро пожаловать</div>
+    <div class="modal-sub">Войдите в Edutrack</div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="login-email" type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Пароль</label>
+      <input class="form-input" id="login-password" type="password" placeholder="••••••••">
+    </div>
+    <button class="btn btn-primary w-full mt-8" onclick="doLogin()">Войти</button>
+    <div class="auth-switch" style="margin-top:16px">Нет аккаунта? <span onclick="switchModal('login-modal','register-modal')">Зарегистрируйся</span></div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal-overlay" id="register-modal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('register-modal')">✕</div>
+    <div class="modal-title">Создать аккаунт</div>
+    <div class="modal-sub">Начни обмен знаниями сегодня</div>
+    <div class="form-group">
+      <label class="form-label">Имя</label>
+      <input class="form-input" id="reg-name" type="text" placeholder="Иван Иванов">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="reg-email" type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Пароль</label>
+      <input class="form-input" id="reg-password" type="password" placeholder="Минимум 8 символов">
+    </div>
+    <button class="btn btn-primary w-full mt-8" onclick="doRegister()">Зарегистрироваться</button>
+    <div class="auth-switch" style="margin-top:16px">Уже есть аккаунт? <span onclick="switchModal('register-modal','login-modal')">Войти</span></div>
+  </div>
+</div>
+
+<!-- CREATE LESSON -->
+<div class="modal-overlay" id="create-lesson-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-close" onclick="closeModal('create-lesson-modal')">✕</div>
+    <div class="modal-title">Создать урок</div>
+    <div class="modal-sub">Поделись знаниями и получи SkillCoins</div>
+    <div class="form-group">
+      <label class="form-label">Название урока</label>
+      <input class="form-input" id="lesson-title" placeholder="Например: SQL за 30 минут">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Категория</label>
+        <select class="form-select" id="lesson-category">
+          <option value="programming">Программирование</option>
+          <option value="design">Дизайн</option>
+          <option value="marketing">Маркетинг</option>
+          <option value="language">Языки</option>
+          <option value="other">Другое</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Навык</label>
+        <input class="form-input" id="lesson-skill" placeholder="Python, Figma...">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Уровень</label>
+        <select class="form-select" id="lesson-level">
+          <option value="beginner">Начинающий</option>
+          <option value="intermediate">Средний</option>
+          <option value="advanced">Продвинутый</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Стоимость (🪙)</label>
+        <input class="form-input" id="lesson-cost" type="number" value="10" min="0" max="200">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Описание</label>
+      <textarea class="form-textarea" id="lesson-desc" placeholder="Что студент узнает из этого урока?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ссылка на видео (необязательно)</label>
+      <input class="form-input" id="lesson-video" placeholder="https://youtube.com/...">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('create-lesson-modal')">Отмена</button>
+      <button class="btn btn-primary" style="flex:1" onclick="doCreateLesson()">Создать урок (+20 🪙)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TEACH SKILL -->
+<div class="modal-overlay" id="add-teach-modal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('add-teach-modal')">✕</div>
+    <div class="modal-title">Добавить навык для обучения</div>
+    <div class="modal-sub">Что ты можешь преподавать?</div>
+    <div class="form-group">
+      <label class="form-label">Навык</label>
+      <input class="form-input" id="teach-skill-name" placeholder="Python, Figma, английский...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Категория</label>
+      <select class="form-select" id="teach-skill-cat">
+        <option value="programming">Программирование</option>
+        <option value="design">Дизайн</option>
+        <option value="marketing">Маркетинг</option>
+        <option value="language">Языки</option>
+        <option value="other">Другое</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Уровень владения</label>
+      <select class="form-select" id="teach-skill-level">
+        <option value="beginner">Начинающий</option>
+        <option value="intermediate">Средний</option>
+        <option value="advanced">Продвинутый</option>
+      </select>
+    </div>
+    <button class="btn btn-primary w-full mt-8" onclick="doAddTeachSkill()">Добавить</button>
+  </div>
+</div>
+
+<!-- ADD LEARN SKILL -->
+<div class="modal-overlay" id="add-learn-modal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('add-learn-modal')">✕</div>
+    <div class="modal-title">Что хочешь изучить?</div>
+    <div class="modal-sub">Алгоритм найдёт тебе наставника</div>
+    <div class="form-group">
+      <label class="form-label">Навык</label>
+      <input class="form-input" id="learn-skill-name" placeholder="SQL, рисование, фотография...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Категория</label>
+      <select class="form-select" id="learn-skill-cat">
+        <option value="programming">Программирование</option>
+        <option value="design">Дизайн</option>
+        <option value="marketing">Маркетинг</option>
+        <option value="language">Языки</option>
+        <option value="other">Другое</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Желаемый уровень</label>
+      <select class="form-select" id="learn-skill-level">
+        <option value="beginner">Начинающий</option>
+        <option value="intermediate">Средний</option>
+        <option value="advanced">Продвинутый</option>
+      </select>
+    </div>
+    <button class="btn btn-primary w-full mt-8" onclick="doAddLearnSkill()">Добавить</button>
+  </div>
+</div>
+
+<!-- LESSON DETAIL MODAL -->
+<div class="modal-overlay" id="lesson-detail-modal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-close" onclick="closeModal('lesson-detail-modal')">✕</div>
+    <div id="lesson-detail-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = ''; // Same origin — FastAPI serves both frontend and API
+let token = localStorage.getItem('edutrack_token');
+let currentUser = null;
+let teachSkills = [];
+let learnSkills = [];
+
+// ---- Cached data from API ----
+let cachedLessons = [];
+let cachedChallenges = [];
+let cachedUsers = [];
+
+// ---- NAVIGATION ----
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('page-'+page)?.classList.add('active');
+  const links = document.querySelectorAll('.nav-link');
+  const map = {home:0,lessons:1,match:2,challenges:3,leaderboard:4};
+  if (map[page] !== undefined) links[map[page]]?.classList.add('active');
+  window.scrollTo(0,0);
+  if (page === 'lessons') renderLessons('all');
+  if (page === 'challenges') renderChallenges();
+  if (page === 'match') renderMatch();
+  if (page === 'leaderboard') renderLeaderboard();
+  if (page === 'profile') renderProfile();
+}
+
+// ---- AUTH ----
+async function apiPost(endpoint, data, auth=false) {
+  const headers = {'Content-Type':'application/json'};
+  if (auth && token) headers['Authorization'] = 'Bearer '+token;
+  try {
+    const r = await fetch(API+endpoint, {method:'POST', headers, body:JSON.stringify(data)});
+    return await r.json();
+  } catch { return null; }
+}
+
+async function apiGet(endpoint, auth=false) {
+  const headers = {};
+  if (auth && token) headers['Authorization'] = 'Bearer '+token;
+  try {
+    const r = await fetch(API+endpoint, {headers});
+    if (!r.ok) return null;
+    return await r.json();
+  } catch { return null; }
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const pw = document.getElementById('login-password').value;
+  if (!email || !pw) { showToast('Заполни все поля','error'); return; }
+  const btn = document.querySelector('#login-modal .btn-primary');
+  btn.disabled = true; btn.textContent = 'Входим...';
+  const res = await apiPost('/api/auth/login', {email, password: pw});
+  btn.disabled = false; btn.textContent = 'Войти';
+  if (!res || res.detail) { showToast(res?.detail || 'Ошибка входа', 'error'); return; }
+  applyAuth(res);
+  closeModal('login-modal');
+  showToast(`Привет, ${res.user.name}! 👋`);
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const pw = document.getElementById('reg-password').value;
+  if (!name || !email || !pw) { showToast('Заполни все поля','error'); return; }
+  const btn = document.querySelector('#register-modal .btn-primary');
+  btn.disabled = true; btn.textContent = 'Создаём...';
+  const res = await apiPost('/api/auth/register', {name, email, password: pw});
+  btn.disabled = false; btn.textContent = 'Создать аккаунт';
+  if (!res || res.detail) { showToast(res?.detail || 'Ошибка регистрации', 'error'); return; }
+  applyAuth(res);
+  closeModal('register-modal');
+  showToast('Добро пожаловать! +100 🪙 стартовый бонус', 'success');
+}
+
+function applyAuth(res) {
+  token = res.access_token;
+  localStorage.setItem('edutrack_token', token);
+  localStorage.setItem('edutrack_refresh', res.refresh_token);
+  currentUser = {...res.user, initials: res.user.name.slice(0,2).toUpperCase()};
+  localStorage.setItem('edutrack_user', JSON.stringify(currentUser));
+  updateNavAuth();
+}
+
+async function doLogout() {
+  token = null; currentUser = null;
+  teachSkills = []; learnSkills = [];
+  localStorage.removeItem('edutrack_token');
+  localStorage.removeItem('edutrack_refresh');
+  localStorage.removeItem('edutrack_user');
+  updateNavAuth();
+  navigate('home');
+  showToast('Вышел из аккаунта');
+}
+
+function updateNavAuth() {
+  const loggedIn = !!currentUser;
+  document.getElementById('btn-login').style.display = loggedIn ? 'none' : '';
+  document.getElementById('btn-register').style.display = loggedIn ? 'none' : '';
+  document.getElementById('coin-display').style.display = loggedIn ? 'flex' : 'none';
+  document.getElementById('user-avatar').style.display = loggedIn ? 'flex' : 'none';
+  if (loggedIn) {
+    document.getElementById('coin-amount').textContent = Math.round(currentUser.skill_coins);
+    document.getElementById('user-avatar').textContent = currentUser.initials || currentUser.name.slice(0,2).toUpperCase();
+  }
+}
+
+async function checkAuth() {
+  const saved = localStorage.getItem('edutrack_user');
+  if (saved && token) {
+    currentUser = JSON.parse(saved);
+    updateNavAuth();
+    // Re-validate token and refresh user data
+    const fresh = await apiGet('/api/auth/me', true);
+    if (fresh && !fresh.detail) {
+      currentUser = {...fresh, initials: fresh.name.slice(0,2).toUpperCase()};
+      localStorage.setItem('edutrack_user', JSON.stringify(currentUser));
+      updateNavAuth();
+      // Load skills from backend
+      const skills = await apiGet('/api/users/me/skills', true);
+      if (skills && Array.isArray(skills)) {
+        teachSkills = skills.filter(s=>s.skill_type==='teach').map(s=>({id:s.id,name:s.name,cat:s.level}));
+        learnSkills = skills.filter(s=>s.skill_type==='learn').map(s=>({id:s.id,name:s.name,cat:s.level}));
+      }
+    } else {
+      // Token expired — clear
+      token = null; currentUser = null;
+      localStorage.removeItem('edutrack_token');
+      localStorage.removeItem('edutrack_user');
+      updateNavAuth();
+    }
+  }
+}
+
+// ---- RENDER HOME ----
+async function renderHome() {
+  // Online users row — use leaderboard top users
+  const or = document.getElementById('online-row');
+  or.innerHTML = '<div style="color:var(--text3);font-size:13px">Загрузка...</div>';
+
+  // Popular lessons from API
+  const pl = document.getElementById('popular-lessons');
+  pl.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Загрузка...</div>';
+
+  // Active challenges
+  const hc = document.getElementById('home-challenges');
+  hc.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Загрузка...</div>';
+
+  const [popular, challenges, lbUsers] = await Promise.all([
+    apiGet('/api/lessons/popular?limit=3'),
+    apiGet('/api/challenges?status=active'),
+    apiGet('/api/leaderboard/coins?limit=5'),
+  ]);
+
+  // Online users row
+  const users = (lbUsers || []).map(e=>e.user);
+  if (users.length) {
+    or.innerHTML = users.map(u => `
+      <div class="online-user">
+        <div class="online-avatar" style="background:linear-gradient(135deg,${randomGradient(u.id)})">
+          ${(u.name||'?').slice(0,2).toUpperCase()}
+          <div class="online-indicator"></div>
+        </div>
+        <div class="online-name">${u.name.split(' ')[0]}</div>
+      </div>
+    `).join('');
+  } else {
+    or.innerHTML = '<div style="color:var(--text3);font-size:13px">Никого онлайн</div>';
+  }
+
+  // Popular lessons
+  if (popular && popular.length) {
+    cachedLessons = popular;
+    pl.innerHTML = popular.slice(0,3).map(l => lessonCard(l)).join('');
+  } else {
+    pl.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Уроков пока нет</div>';
+  }
+
+  // Challenges
+  if (challenges && challenges.length) {
+    cachedChallenges = challenges;
+    hc.innerHTML = challenges.slice(0,3).map(c => challengeCard(c)).join('');
+  } else {
+    hc.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Челленджей пока нет</div>';
+  }
+}
+
+function randomGradient(id) {
+  const g = [
+    '#6c63ff,#43e89e','#ff6b6b,#ffd166','#43e89e,#38bdf8',
+    '#ffd166,#ff6b6b','#a855f7,#6c63ff'
+  ];
+  return g[id % g.length];
+}
+
+// ---- LESSON CARD ----
+function lessonCard(l) {
+  const levelMap = {beginner:'Начальный',intermediate:'Средний',advanced:'Продвинутый'};
+  const catColor = {programming:'tag-purple',design:'tag-blue',language:'tag-green',marketing:'tag-amber',other:'tag-blue'};
+  return `
+    <div class="card" onclick="openLesson(${l.id})">
+      ${l.is_live ? '<div style="position:absolute;top:14px;right:14px"><span class="tag tag-live">🔴 LIVE</span></div>' : ''}
+      <div class="card-top">
+        <div>
+          <div style="display:flex;gap:6px;margin-bottom:8px">
+            <span class="tag ${catColor[l.skill_category]||'tag-purple'}">${l.skill_name}</span>
+            <span class="tag tag-amber">${levelMap[l.level]||l.level}</span>
+          </div>
+          <div class="card-title">${l.title}</div>
+          <div class="card-meta">${l.description}</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div style="display:flex;gap:12px;align-items:center">
+          <span style="font-size:12px;color:var(--text2)">👁 ${l.views}</span>
+          <span style="font-size:12px;color:var(--text2)">❤️ ${l.likes}</span>
+          <span style="font-size:12px;color:var(--text2)">от ${l.author?.name||'Автор'}</span>
+        </div>
+        <div class="coin-cost"><span class="coin-icon">🪙</span>${l.coin_cost}</div>
+      </div>
+    </div>
+  `;
+}
+
+async function openLesson(id) {
+  // Try cache first, then fetch
+  let lesson = cachedLessons.find(l=>l.id===id);
+  if (!lesson) {
+    lesson = await apiGet(`/api/lessons/${id}`);
+  }
+  if (!lesson) return;
+  const levelMap = {beginner:'Начальный',intermediate:'Средний',advanced:'Продвинутый'};
+  const authorName = lesson.author?.name || 'Автор';
+  document.getElementById('lesson-detail-content').innerHTML = `
+    <div style="margin-bottom:16px">
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <span class="tag tag-purple">${lesson.skill_name}</span>
+        <span class="tag tag-amber">${levelMap[lesson.level]||lesson.level}</span>
+        ${lesson.is_live?'<span class="tag tag-live">🔴 LIVE</span>':''}
+      </div>
+      <div class="modal-title">${lesson.title}</div>
+      <div class="modal-sub">${lesson.description}</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="display:flex;gap:16px;font-size:13px;color:var(--text2)">
+        <span>👁 ${lesson.views} просмотров</span>
+        <span>от ${authorName}</span>
+      </div>
+      <div class="coin-cost" style="font-size:16px"><span>🪙</span>${lesson.coin_cost}</div>
+    </div>
+    ${lesson.video_url ? `<div style="margin-bottom:16px"><a href="${lesson.video_url}" target="_blank" class="btn btn-secondary" style="width:100%;display:block;text-align:center">▶ Смотреть видео</a></div>` : ''}
+    <button class="btn btn-primary w-full" onclick="enrollLesson(${lesson.id},${lesson.coin_cost})">
+      Записаться на урок (−${lesson.coin_cost} 🪙)
+    </button>
+  `;
+  showModal('lesson-detail-modal');
+}
+
+async function enrollLesson(id, cost) {
+  if (!currentUser) { showToast('Войди, чтобы записаться','error'); return; }
+  const btn = document.querySelector('#lesson-detail-modal .btn-primary');
+  btn.disabled = true; btn.textContent = 'Записываемся...';
+  const res = await apiPost(`/api/lessons/${id}/enroll`, {}, true);
+  btn.disabled = false;
+  if (!res || res.detail) {
+    showToast(res?.detail || 'Ошибка записи', 'error');
+    return;
+  }
+  currentUser.skill_coins -= cost;
+  localStorage.setItem('edutrack_user', JSON.stringify(currentUser));
+  document.getElementById('coin-amount').textContent = Math.round(currentUser.skill_coins);
+  closeModal('lesson-detail-modal');
+  showToast(`Записан на урок! 🎉`, 'success');
+}
+
+// ---- RENDER LESSONS ----
+let currentFilter = 'all';
+async function renderLessons(filter) {
+  currentFilter = filter;
+  const grid = document.getElementById('lessons-grid');
+  grid.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Загрузка уроков...</div>';
+  const params = filter && filter !== 'all' ? `?category=${filter}` : '';
+  const lessons = await apiGet('/api/lessons' + params);
+  cachedLessons = lessons || [];
+  if (!cachedLessons.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><h3>Уроков пока нет</h3><p>Стань первым — создай урок!</p></div>';
+  } else {
+    grid.innerHTML = cachedLessons.map(l => lessonCard(l)).join('');
+  }
+}
+
+function filterLessons(cat, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderLessons(cat);
+}
+
+// ---- CREATE LESSON ----
+async function doCreateLesson() {
+  if (!currentUser) { showToast('Войди сначала','error'); return; }
+  const title = document.getElementById('lesson-title').value;
+  if (!title) { showToast('Введи название урока','error'); return; }
+  const btn = document.querySelector('#create-lesson-modal .btn-primary');
+  btn.disabled = true; btn.textContent = 'Создаём...';
+  const body = {
+    title,
+    description: document.getElementById('lesson-desc').value || 'Описание урока',
+    category: document.getElementById('lesson-category').value,
+    skill_name: document.getElementById('lesson-skill').value || 'Навык',
+    level: document.getElementById('lesson-level').value,
+    coin_cost: parseFloat(document.getElementById('lesson-cost').value) || 10,
+    video_url: document.getElementById('lesson-video').value || null,
+    is_live: false,
+  };
+  const res = await apiPost('/api/lessons', body, true);
+  btn.disabled = false; btn.textContent = 'Опубликовать';
+  if (!res || res.detail) { showToast(res?.detail || 'Ошибка создания','error'); return; }
+  currentUser.skill_coins += 20;
+  localStorage.setItem('edutrack_user', JSON.stringify(currentUser));
+  document.getElementById('coin-amount').textContent = Math.round(currentUser.skill_coins);
+  closeModal('create-lesson-modal');
+  showToast('Урок создан! +20 🪙', 'success');
+  renderLessons(currentFilter);
+}
+
+// ---- RENDER CHALLENGES ----
+async function renderChallenges() {
+  const grid = document.getElementById('challenges-grid');
+  grid.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Загрузка...</div>';
+  const challenges = await apiGet('/api/challenges?status=active');
+  cachedChallenges = challenges || [];
+  grid.innerHTML = cachedChallenges.length
+    ? cachedChallenges.map(c => challengeCard(c)).join('')
+    : '<div class="empty"><div class="empty-icon">🏆</div><h3>Челленджей пока нет</h3></div>';
+  const hc = document.getElementById('home-challenges');
+  if (hc) hc.innerHTML = cachedChallenges.slice(0,3).map(c => challengeCard(c)).join('');
+}
+
+function challengeCard(c) {
+  // Support both backend (coin_reward, participant_count) and cached data
+  const reward = c.coin_reward ?? c.reward_coins ?? 0;
+  const participants = c.participant_count ?? c.participants ?? 0;
+  const maxP = c.max_participants ?? 50;
+  const pct = Math.round((participants / maxP) * 100);
+  const d = new Date(c.deadline);
+  const days = Math.ceil((d - Date.now()) / 86400000);
+  const tag = c.skill_tag || c.skill_category || 'навык';
+  return `
+    <div class="challenge-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <span class="tag tag-purple">${tag}</span>
+        <div class="coin-cost">+${reward} 🪙</div>
+      </div>
+      <div class="card-title">${c.title}</div>
+      <div class="card-meta" style="margin-top:6px">${c.description}</div>
+      <div class="challenge-progress">
+        <div class="challenge-bar" style="width:${pct}%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--text2)">
+        <span>${participants}/${maxP} участников</span>
+        <span>⏰ ${days > 0 ? days+' дн.' : 'Скоро'}</span>
+      </div>
+      <button class="btn btn-outline w-full" style="margin-top:14px" onclick="joinChallenge(${c.id})">Участвовать</button>
+    </div>
+  `;
+}
+
+async function joinChallenge(id) {
+  if (!currentUser) { showToast('Войди для участия','error'); return; }
+  const res = await apiPost(`/api/challenges/${id}/join`, {}, true);
+  if (!res || (res.detail && res.detail !== 'Joined challenge')) {
+    showToast(res?.detail || 'Ошибка','error'); return;
+  }
+  showToast('Ты в команде! 💪', 'success');
+  renderChallenges();
+}
+
+// ---- RENDER MATCH ----
+async function renderMatch() {
+  // Teach tags
+  const tt = document.getElementById('teach-tags');
+  tt.innerHTML = teachSkills.map(s => `<div class="skill-tag teach">${s.name} <span style="color:var(--text3);margin-left:2px;cursor:pointer" onclick="removeSkill(${s.id||0},'teach','${s.name}')">✕</span></div>`).join('');
+  // Learn tags
+  const lt = document.getElementById('learn-tags');
+  lt.innerHTML = learnSkills.map(s => `<div class="skill-tag learn">${s.name} <span style="color:var(--text3);margin-left:2px;cursor:pointer" onclick="removeSkill(${s.id||0},'learn','${s.name}')">✕</span></div>`).join('');
+  // Suggestions from API
+  const ms = document.getElementById('match-suggestions');
+  if (!teachSkills.length && !learnSkills.length) {
+    ms.innerHTML = `<div class="empty"><div class="empty-icon">🤝</div><h3>Добавь навыки</h3><p>Укажи что ты преподаёшь и что хочешь изучить — алгоритм найдёт пары</p></div>`;
+    return;
+  }
+  if (!currentUser) {
+    ms.innerHTML = `<div class="empty"><div class="empty-icon">🔐</div><h3>Войди в аккаунт</h3><p>Для матчинга нужно зарегистрироваться</p></div>`;
+    return;
+  }
+  ms.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Ищем пары...</div>';
+  const suggestions = await apiGet('/api/matches/suggestions', true);
+  if (!suggestions || !suggestions.length) {
+    ms.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>Пар не найдено</h3><p>Попробуй добавить больше навыков</p></div>`;
+    return;
+  }
+  ms.innerHTML = suggestions.map(s => `
+    <div class="match-card">
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,${randomGradient(s.user.id)});display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0">${s.user.name.slice(0,2).toUpperCase()}</div>
+      <div class="match-skills">
+        <div style="font-family:Syne,sans-serif;font-weight:700;font-size:15px;margin-bottom:6px">${s.user.name}</div>
+        ${s.teach_skill ? `<div class="match-row"><span class="tag tag-purple" style="font-size:11px">Учит</span><span style="font-size:13px">${s.teach_skill}</span></div>` : ''}
+        ${s.learn_skill ? `<div class="match-row" style="margin-top:4px"><span class="tag tag-green" style="font-size:11px">Учится</span><span style="font-size:13px">${s.learn_skill}</span></div>` : ''}
+        <div style="display:flex;align-items:center;gap:4px;margin-top:6px;font-size:12px;color:var(--coin)">⭐ ${s.user.rating?.toFixed(1)||'0.0'} • совпадение ${Math.round(s.score*100)}%</div>
+      </div>
+      <div class="match-actions">
+        <button class="btn btn-primary btn-sm" onclick="sendMatch(${s.user.id},'${s.teach_skill||''}','${s.learn_skill||''}')">Написать</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function sendMatch(targetId, teachSkill, learnSkill) {
+  if (!currentUser) { showToast('Войди сначала','error'); return; }
+  const res = await apiPost('/api/matches', {target_id: targetId, teach_skill: teachSkill, learn_skill: learnSkill}, true);
+  if (!res || res.detail) { showToast(res?.detail || 'Ошибка','error'); return; }
+  showToast('Запрос матча отправлен! 🤝', 'success');
+}
+
+async function doAddTeachSkill() {
+  const name = document.getElementById('teach-skill-name').value.trim();
+  if (!name) return;
+  if (currentUser) {
+    const res = await apiPost('/api/users/me/skills', {name, skill_type:'teach', level: document.getElementById('teach-skill-cat').value||'beginner'}, true);
+    if (res && !res.detail) {
+      teachSkills.push({id:res.id, name:res.name, cat:res.level});
+    } else {
+      if (!teachSkills.find(s=>s.name===name)) teachSkills.push({name, cat:'beginner'});
+    }
+  } else {
+    if (!teachSkills.find(s=>s.name===name)) teachSkills.push({name, cat:'beginner'});
+  }
+  document.getElementById('teach-skill-name').value = '';
+  closeModal('add-teach-modal');
+  renderMatch();
+  showToast(`Навык «${name}» добавлен`, 'success');
+}
+
+async function doAddLearnSkill() {
+  const name = document.getElementById('learn-skill-name').value.trim();
+  if (!name) return;
+  if (currentUser) {
+    const res = await apiPost('/api/users/me/skills', {name, skill_type:'learn', level: document.getElementById('learn-skill-cat').value||'beginner'}, true);
+    if (res && !res.detail) {
+      learnSkills.push({id:res.id, name:res.name, cat:res.level});
+    } else {
+      if (!learnSkills.find(s=>s.name===name)) learnSkills.push({name, cat:'beginner'});
+    }
+  } else {
+    if (!learnSkills.find(s=>s.name===name)) learnSkills.push({name, cat:'beginner'});
+  }
+  document.getElementById('learn-skill-name').value = '';
+  closeModal('add-learn-modal');
+  renderMatch();
+  showToast(`Хочу изучить «${name}» — ищем пары!`, 'success');
+}
+
+async function removeSkill(id, type, name) {
+  if (currentUser && id) {
+    await fetch(`${API}/api/users/me/skills/${id}`, {
+      method:'DELETE',
+      headers: token ? {Authorization:'Bearer '+token} : {}
+    });
+  }
+  if (type === 'teach') teachSkills = teachSkills.filter(s=>s.name!==name);
+  else learnSkills = learnSkills.filter(s=>s.name!==name);
+  renderMatch();
+}
+
+// ---- LEADERBOARD ----
+async function renderLeaderboard() {
+  const rankClass = ['gold','silver','bronze','','','','','','',''];
+  const medal = ['🥇','🥈','🥉','4','5','6','7','8','9','10'];
+
+  document.getElementById('lb-teachers').innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px">Загрузка...</div>';
+  document.getElementById('lb-students').innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px">Загрузка...</div>';
+
+  const [coinLb, ratingLb] = await Promise.all([
+    apiGet('/api/leaderboard/coins?limit=10'),
+    apiGet('/api/leaderboard/rating?limit=10'),
+  ]);
+
+  const renderRow = (entry, i, valueEl) => `
+    <div class="lb-row">
+      <div class="lb-rank ${rankClass[i]||''}">${medal[i]||entry.rank}</div>
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,${randomGradient(entry.user.id)});display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${entry.user.name.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${entry.user.name}</div>
+        <div style="font-size:12px;color:var(--text2)">${entry.user.bio||'Участник'}</div>
+      </div>
+      ${valueEl}
+    </div>
+  `;
+
+  document.getElementById('lb-teachers').innerHTML = coinLb && coinLb.length
+    ? coinLb.map((e,i) => renderRow(e, i, `<div class="coin-cost">🪙 ${Math.round(e.value)}</div>`)).join('')
+    : '<div style="color:var(--text3);font-size:13px;padding:12px">Нет данных</div>';
+
+  document.getElementById('lb-students').innerHTML = ratingLb && ratingLb.length
+    ? ratingLb.map((e,i) => renderRow(e, i, `<div style="font-size:13px;color:var(--coin)">⭐ ${e.value?.toFixed(1)||'0.0'}</div>`)).join('')
+    : '<div style="color:var(--text3);font-size:13px;padding:12px">Нет данных</div>';
+}
+
+// ---- PROFILE ----
+async function renderProfile() {
+  if (!currentUser) {
+    document.getElementById('profile-content').innerHTML = `
+      <div class="empty" style="padding:60px">
+        <div class="empty-icon">🔐</div>
+        <h3>Войди в аккаунт</h3>
+        <p>Чтобы видеть профиль, нужно авторизоваться</p>
+        <button class="btn btn-primary" style="margin-top:16px" onclick="showModal('login-modal')">Войти</button>
+      </div>`;
+    return;
+  }
+  const user = currentUser;
+  const initials = user.initials || user.name.slice(0,2).toUpperCase();
+
+  // Load coin history
+  const coinHistory = await apiGet('/api/users/me/coins?limit=20', true);
+
+  document.getElementById('profile-content').innerHTML = `
+    <div class="profile-header">
+      <div class="profile-avatar">${initials}</div>
+      <div class="profile-info">
+        <div class="profile-name">${user.name}</div>
+        <div class="profile-bio">${user.bio || 'Расскажи о себе — добавь bio'}</div>
+        <div class="profile-meta">
+          <div class="coin-badge"><span>🪙</span> ${Math.round(user.skill_coins)} SkillCoins</div>
+          <div class="rating-stars">⭐ ${user.rating?.toFixed(1)||'0.0'}</div>
+          <div class="badge-pill badge-new">Новичок</div>
+        </div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="doLogout()">Выйти</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" style="color:var(--accent)">${cachedLessons.length||'—'}</div><div class="stat-label">Уроков доступно</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--accent3)">${teachSkills.length}</div><div class="stat-label">Преподаю навыков</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--accent4)">${learnSkills.length}</div><div class="stat-label">Изучаю навыков</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--coin)">${Math.round(user.skill_coins)}</div><div class="stat-label">SkillCoins</div></div>
+    </div>
+    <div class="tab-bar" style="margin-bottom:24px">
+      <div class="tab active" onclick="switchProfileTab('teach',this)">📖 Преподаю</div>
+      <div class="tab" onclick="switchProfileTab('learn',this)">🎓 Учусь</div>
+      <div class="tab" onclick="switchProfileTab('history',this)">🪙 История монет</div>
+    </div>
+    <div id="profile-tab-teach">
+      ${teachSkills.length ? teachSkills.map(s=>`<div class="skill-tag teach" style="display:inline-flex;margin:0 8px 8px 0">${s.name}</div>`).join('') : '<div class="empty" style="padding:30px"><div class="empty-icon">📚</div><h3>Навыков нет</h3><p>Добавь навыки в разделе Матчинг</p></div>'}
+    </div>
+    <div id="profile-tab-learn" style="display:none">
+      ${learnSkills.length ? learnSkills.map(s=>`<div class="skill-tag learn" style="display:inline-flex;margin:0 8px 8px 0">${s.name}</div>`).join('') : '<div class="empty" style="padding:30px"><div class="empty-icon">🎯</div><h3>Навыков нет</h3><p>Добавь что хочешь изучить в разделе Матчинг</p></div>'}
+    </div>
+    <div id="profile-tab-history" style="display:none">
+      ${coinHistory && coinHistory.length
+        ? coinHistory.map(tx => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px">
+            <div>
+              <div style="font-weight:500">${tx.reason||tx.tx_type}</div>
+              <div style="font-size:12px;color:var(--text2)">${new Date(tx.created_at).toLocaleDateString('ru')}</div>
+            </div>
+            <div style="font-weight:700;color:${tx.amount>0?'var(--accent3)':'var(--accent2)'}">${tx.amount>0?'+':''}${tx.amount} 🪙</div>
+          </div>`).join('')
+        : '<div class="empty" style="padding:30px"><div class="empty-icon">💰</div><h3>Транзакций нет</h3><p>Создавай уроки и участвуй в обменах чтобы зарабатывать монеты</p></div>'}
+    </div>
+  `;
+}
+
+function switchProfileTab(tab, el) {
+  document.querySelectorAll('#page-profile .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['teach','learn','history'].forEach(t => {
+    const el2 = document.getElementById('profile-tab-'+t);
+    if (el2) el2.style.display = t===tab?'block':'none';
+  });
+}
+
+// ---- SEARCH ----
+function handleSearch(e) {
+  if (e.key === 'Enter') doSearch();
+}
+async function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  navigate('lessons');
+  setTimeout(async () => {
+    const grid = document.getElementById('lessons-grid');
+    grid.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Поиск...</div>';
+    const results = await apiGet(`/api/lessons?q=${encodeURIComponent(q)}&limit=50`);
+    if (!results || !results.length) {
+      grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>По запросу «${q}» ничего не найдено</h3><p>Попробуй другой навык или создай первый урок!</p></div>`;
+    } else {
+      cachedLessons = results;
+      grid.innerHTML = results.map(l=>lessonCard(l)).join('');
+    }
+  }, 100);
+}
+
+// ---- MODALS ----
+function showModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+function switchModal(from, to) {
+  closeModal(from);
+  setTimeout(()=>showModal(to), 100);
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => {
+    if (e.target === m) m.classList.remove('open');
+  });
+});
+
+// ---- TOAST ----
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ---- INIT ----
+(async () => {
+  await checkAuth();
+  renderHome();
+})();
+</script>
+</body>
+</html>
