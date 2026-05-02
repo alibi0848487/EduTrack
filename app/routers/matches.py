@@ -1,14 +1,3 @@
-"""
-Matching router — finds skill-exchange pairs.
-
-Algorithm:
-1. Get current user's teach & learn skills.
-2. Find users whose teach skills overlap with current user's learn skills
-   AND whose learn skills overlap with current user's teach skills.
-3. Score = (overlap_teach + overlap_learn) / (total_unique_skills + 1),
-   weighted by target user rating.
-4. Return sorted suggestions with score.
-"""
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -22,7 +11,6 @@ from app.schemas.schemas import MatchCreate, MatchOut, MatchStatusUpdate, MatchS
 router = APIRouter(prefix="/api/matches", tags=["matches"])
 
 
-# ─── SUGGESTIONS (ALGORITHM) ────────────────────────────────────────────────
 @router.get("/suggestions", response_model=List[MatchSuggestion])
 def get_suggestions(
     db: Session = Depends(get_db),
@@ -35,7 +23,6 @@ def get_suggestions(
     if not my_teach and not my_learn:
         return []
 
-    # Fetch all other active users with at least one skill
     candidates = (
         db.query(User)
         .filter(User.id != current_user.id, User.is_active == True)
@@ -47,9 +34,7 @@ def get_suggestions(
         c_teach = {s.name.lower(): s.name for s in candidate.skills if s.skill_type == SkillType.teach}
         c_learn = {s.name.lower(): s.name for s in candidate.skills if s.skill_type == SkillType.learn}
 
-        # What I can learn from them
         learnable = my_learn & set(c_teach.keys())
-        # What they want to learn from me
         teachable = my_teach & set(c_learn.keys())
 
         if not learnable and not teachable:
@@ -74,7 +59,6 @@ def get_suggestions(
     return suggestions[:limit]
 
 
-# ─── CRUD ────────────────────────────────────────────────────────────────────
 @router.post("", response_model=MatchOut, status_code=201)
 def create_match(
     body: MatchCreate,
@@ -158,7 +142,6 @@ def update_match_status(
     if body.status not in allowed_statuses:
         raise HTTPException(status_code=422, detail=f"Status must be one of {allowed_statuses}")
 
-    # Only target can accept/decline; either party can mark completed
     if body.status in ("accepted", "declined") and match.target_id != current_user.id:
         raise HTTPException(status_code=403, detail="Only the match target can accept or decline")
 
@@ -167,7 +150,6 @@ def update_match_status(
 
     match.status = body.status
 
-    # On completion — reward both parties and update ratings
     if body.status == "completed":
         reward = 15.0
         for uid in (match.requester_id, match.target_id):

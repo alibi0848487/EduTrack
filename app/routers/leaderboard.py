@@ -8,7 +8,6 @@ from app.core.security import get_current_user
 from app.models.user import Review, User
 from app.schemas.schemas import LeaderboardEntry, ReviewCreate, ReviewOut, UserOut
 
-# ─── LEADERBOARD ──────────────────────────────────────────────────────────────
 leaderboard_router = APIRouter(prefix="/api/leaderboard", tags=["leaderboard"])
 
 
@@ -42,7 +41,6 @@ def leaderboard_rating(limit: int = 10, db: Session = Depends(get_db)):
     ]
 
 
-# ─── REVIEWS ──────────────────────────────────────────────────────────────────
 reviews_router = APIRouter(prefix="/api/reviews", tags=["reviews"])
 
 
@@ -69,7 +67,6 @@ def create_review(
     db.add(review)
     db.flush()
 
-    # Recalculate average rating for target user
     all_reviews = db.query(Review).filter(Review.reviewed_id == body.reviewed_id).all()
     if all_reviews:
         target.rating = sum(r.rating for r in all_reviews) / len(all_reviews)

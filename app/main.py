@@ -19,7 +19,6 @@ import app.models.user  # noqa: F401
 
 Base.metadata.create_all(bind=engine)
 
-# ─── App ─────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Edutrack API",
     description="Backend for Edutrack — skill exchange platform",
@@ -29,7 +28,6 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
 )
 
-# ─── CORS ─────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -38,7 +36,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ─── Routers ─────────────────────────────────────────────────────────────────
 app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(lessons_router)
@@ -53,7 +50,6 @@ def health():
     return {"status": "ok", "service": "edutrack-api"}
 
 
-# ─── Static frontend (must be LAST) ──────────────────────────────────────────
 STATIC_DIR = Path(__file__).parent.parent / "static"
 
 if STATIC_DIR.exists():
@@ -62,7 +58,6 @@ if STATIC_DIR.exists():
     @app.get("/", include_in_schema=False)
     @app.get("/{full_path:path}", include_in_schema=False)
     def serve_frontend(full_path: str = ""):
-        # Let /api/* routes pass through (handled above)
         if full_path.startswith("api/"):
             from fastapi import HTTPException
             raise HTTPException(status_code=404)

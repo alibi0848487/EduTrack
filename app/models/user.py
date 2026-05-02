@@ -14,9 +14,6 @@ def utcnow():
     return datetime.now(timezone.utc)
 
 
-# ─────────────────────────────────────────
-# USER
-# ─────────────────────────────────────────
 class User(Base):
     __tablename__ = "users"
 
@@ -32,7 +29,6 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), default=utcnow)
     updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
-    # relationships
     skills = relationship("Skill", back_populates="user", cascade="all, delete-orphan")
     lessons = relationship("Lesson", back_populates="author", cascade="all, delete-orphan")
     coin_transactions = relationship("CoinTransaction", back_populates="user", cascade="all, delete-orphan")
@@ -41,9 +37,6 @@ class User(Base):
     reviews_received = relationship("Review", foreign_keys="Review.reviewed_id", back_populates="reviewed")
 
 
-# ─────────────────────────────────────────
-# SKILL
-# ─────────────────────────────────────────
 class SkillType(str, enum.Enum):
     teach = "teach"
     learn = "learn"
@@ -63,9 +56,6 @@ class Skill(Base):
     user = relationship("User", back_populates="skills")
 
 
-# ─────────────────────────────────────────
-# LESSON
-# ─────────────────────────────────────────
 class LessonLevel(str, enum.Enum):
     beginner = "beginner"
     intermediate = "intermediate"
@@ -100,9 +90,7 @@ class Lesson(Base):
     author = relationship("User", back_populates="lessons")
 
 
-# ─────────────────────────────────────────
-# MATCH
-# ─────────────────────────────────────────
+
 class MatchStatus(str, enum.Enum):
     pending = "pending"
     accepted = "accepted"
@@ -126,9 +114,6 @@ class Match(Base):
     target = relationship("User", foreign_keys=[target_id])
 
 
-# ─────────────────────────────────────────
-# CHALLENGE
-# ─────────────────────────────────────────
 class ChallengeStatus(str, enum.Enum):
     active = "active"
     completed = "completed"
@@ -164,9 +149,7 @@ class ChallengeParticipant(Base):
     user = relationship("User")
 
 
-# ─────────────────────────────────────────
-# COIN TRANSACTION
-# ─────────────────────────────────────────
+
 class TxType(str, enum.Enum):
     earn = "earn"
     spend = "spend"
@@ -187,9 +170,6 @@ class CoinTransaction(Base):
     user = relationship("User", back_populates="coin_transactions")
 
 
-# ─────────────────────────────────────────
-# REVIEW
-# ─────────────────────────────────────────
 class Review(Base):
     __tablename__ = "reviews"
     __table_args__ = (UniqueConstraint("reviewer_id", "reviewed_id", "match_id"),)
@@ -206,9 +186,6 @@ class Review(Base):
     reviewed = relationship("User", foreign_keys=[reviewed_id], back_populates="reviews_received")
 
 
-# ─────────────────────────────────────────
-# BADGE
-# ─────────────────────────────────────────
 class Badge(Base):
     __tablename__ = "badges"
 

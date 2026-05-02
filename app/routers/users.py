@@ -49,7 +49,6 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
-# ─── SKILLS ───────────────────────────────
 @router.get("/me/skills", response_model=List[SkillOut])
 def get_my_skills(current_user: User = Depends(get_current_user)):
     return current_user.skills
@@ -101,7 +100,6 @@ def delete_skill(
     db.commit()
 
 
-# ─── COINS ────────────────────────────────
 @router.get("/me/coins", response_model=List[CoinTransactionOut])
 def get_coin_history(
     db: Session = Depends(get_db),
@@ -120,7 +118,6 @@ def get_coin_history(
     return txs
 
 
-# ─── REVIEWS ──────────────────────────────
 @router.get("/{user_id}/reviews", response_model=List[ReviewOut])
 def get_user_reviews(user_id: int, db: Session = Depends(get_db)):
     from app.models.user import Review

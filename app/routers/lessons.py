@@ -79,7 +79,6 @@ def create_lesson(
     db.add(lesson)
     db.flush()
 
-    # Reward author
     reward = settings.LESSON_CREATE_REWARD
     current_user.skill_coins += reward
     db.add(CoinTransaction(
@@ -131,14 +130,12 @@ def enroll_in_lesson(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Buy a lesson with SkillCoins."""
     lesson = _lesson_or_404(lesson_id, db)
     if lesson.author_id == current_user.id:
         raise HTTPException(status_code=400, detail="Cannot enroll in your own lesson")
     if current_user.skill_coins < lesson.coin_cost:
         raise HTTPException(status_code=402, detail="Insufficient SkillCoins")
 
-    # Deduct from student
     current_user.skill_coins -= lesson.coin_cost
     db.add(CoinTransaction(
         user_id=current_user.id,
@@ -148,7 +145,6 @@ def enroll_in_lesson(
         ref_id=lesson.id,
     ))
 
-    # Credit author
     author = db.query(User).filter(User.id == lesson.author_id).first()
     if author:
         author.skill_coins += lesson.coin_cost

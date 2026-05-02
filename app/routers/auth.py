@@ -37,7 +37,6 @@ def register(body: RegisterRequest, db: Session = Depends(get_db)):
     db.add(user)
     db.flush()
 
-    # Record initial coin grant
     db.add(CoinTransaction(
         user_id=user.id,
         amount=settings.INITIAL_SKILL_COINS,

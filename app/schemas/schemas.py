@@ -4,9 +4,6 @@ from typing import List, Optional
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
-# ─────────────────────────────────────────
-# AUTH
-# ─────────────────────────────────────────
 class RegisterRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=120)
     email: EmailStr
@@ -36,9 +33,6 @@ class RefreshRequest(BaseModel):
     refresh_token: str
 
 
-# ─────────────────────────────────────────
-# USER
-# ─────────────────────────────────────────
 class UserOut(BaseModel):
     id: int
     name: str
@@ -71,9 +65,6 @@ class UserPublicOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-# ─────────────────────────────────────────
-# SKILL
-# ─────────────────────────────────────────
 class SkillCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     skill_type: str  # "teach" | "learn"
@@ -90,9 +81,6 @@ class SkillOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-# ─────────────────────────────────────────
-# LESSON
-# ─────────────────────────────────────────
 class LessonCreate(BaseModel):
     title: str = Field(..., min_length=3, max_length=200)
     description: Optional[str] = None
@@ -132,9 +120,6 @@ class LessonOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-# ─────────────────────────────────────────
-# MATCH
-# ─────────────────────────────────────────
 class MatchCreate(BaseModel):
     target_id: int
     teach_skill: str = Field(..., min_length=1, max_length=100)
@@ -164,9 +149,6 @@ class MatchSuggestion(BaseModel):
     score: float       # match quality 0–1
 
 
-# ─────────────────────────────────────────
-# CHALLENGE
-# ─────────────────────────────────────────
 class ChallengeCreate(BaseModel):
     title: str = Field(..., min_length=3, max_length=200)
     description: Optional[str] = None
@@ -191,9 +173,6 @@ class ChallengeOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-# ─────────────────────────────────────────
-# REVIEW
-# ─────────────────────────────────────────
 class ReviewCreate(BaseModel):
     reviewed_id: int
     match_id: Optional[int] = None
@@ -211,9 +190,6 @@ class ReviewOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-# ─────────────────────────────────────────
-# BADGE
-# ─────────────────────────────────────────
 class BadgeOut(BaseModel):
     id: int
     code: str
@@ -225,9 +201,6 @@ class BadgeOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-# ─────────────────────────────────────────
-# COIN TRANSACTION
-# ─────────────────────────────────────────
 class CoinTransactionOut(BaseModel):
     id: int
     amount: float
@@ -238,9 +211,6 @@ class CoinTransactionOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-# ─────────────────────────────────────────
-# LEADERBOARD
-# ─────────────────────────────────────────
 class LeaderboardEntry(BaseModel):
     rank: int
     user: UserOut
