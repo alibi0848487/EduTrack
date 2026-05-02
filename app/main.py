@@ -13,9 +13,7 @@ from app.routers.matches import router as matches_router
 from app.routers.challenges import router as challenges_router
 from app.routers.leaderboard import leaderboard_router, reviews_router
 
-# ─── Create tables on startup (use Alembic in production) ───────────────────
-# Import models so Base knows about them
-import app.models.user  # noqa: F401
+import app.models.user  
 
 Base.metadata.create_all(bind=engine)
 
