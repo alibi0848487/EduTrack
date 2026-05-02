@@ -4,12 +4,11 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-# Import models so Alembic can detect them
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.core.database import Base
-import app.models.user  # noqa: F401
+import app.models.user  
 
 config = context.config
 
