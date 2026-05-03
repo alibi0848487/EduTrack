@@ -10,7 +10,11 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(
+    schemes=["argon2"],
+    deprecated="auto"
+)
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
@@ -56,18 +60,23 @@ def get_current_user(
     from app.models.user import User
 
     payload = decode_token(token)
-    user_id: int = payload.get("sub")
+    user_id = payload.get("sub")
+
     if user_id is None:
         raise HTTPException(status_code=401, detail="Invalid token payload")
 
     user = db.query(User).filter(User.id == int(user_id)).first()
+
     if not user or not user.is_active:
         raise HTTPException(status_code=401, detail="User not found or inactive")
+
     return user
 
 
 def get_optional_user(
-    token: Optional[str] = Depends(OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)),
+    token: Optional[str] = Depends(
+        OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
+    ),
     db: Session = Depends(get_db),
 ):
     if not token:
