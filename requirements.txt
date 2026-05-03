@@ -3,7 +3,7 @@ uvicorn[standard]
 sqlalchemy
 alembic
 psycopg2-binary
-passlib
+
 python-jose
 python-multipart
 pydantic
@@ -11,4 +11,4 @@ pydantic-settings
 httpx
 email-validator
 passlib[bcrypt]
-bcrypt
+
