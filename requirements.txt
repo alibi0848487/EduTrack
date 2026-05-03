@@ -10,4 +10,5 @@ pydantic
 pydantic-settings
 httpx
 email-validator
-
+passlib[bcrypt]
+bcrypt
